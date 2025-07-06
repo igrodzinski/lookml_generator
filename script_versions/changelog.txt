@@ -1,0 +1,68 @@
+Wersja: 0.1.0
+Prompt: zbij generowanie kodu na kroki i wersjonuj kazdy krok. Jesli do dopasowania brakuje jednej kolumny np source_system_id to i tka zrob include i brakujaca kolumne zakoduj jako hidden:yes np. #source_system_id: {hidden:yes}.
+Zmiany: Dodano obsługę brakujących kolumn w widokach bazowych, oznaczając je jako ukryte wymiary (hidden:yes) w wygenerowanym kodzie LookML.
+---
+Wersja: 0.2.0
+Prompt: uruchom skrypt
+Zmiany: Poprawiono błędy SyntaxError i NameError, które uniemożliwiały uruchomienie skryptu. Uproszczono generowanie sekcji HTML w dimension_group, aby uniknąć błędów formatowania. Zweryfikowano, że pliki LookML są generowane poprawnie z include i zakomentowanymi kolumnami bazowymi.
+---
+Wersja: 0.3.0
+Prompt: pola ktore sa w plikach _base nie powinny byc przeklejena calkowicie a tylko w jednej linijce #typ: nazwa {}
+Zmiany: Zmodyfikowano generowanie pól z plików _base tak, aby były one generowane w skróconej, zakomentowanej formie: #typ: nazwa {}.
+---
+Wersja: 0.3.1
+Prompt: uruchom skrypt lookml_generator.py
+Zmiany: Naprawiono błędy składniowe w f-stringach oraz błąd NameError związany z niezdefiniowaną zmienną 'TABLE' poprzez zastąpienie jej 'table_id' w parametrach SQL wymiarów LookML.
+---
+Wersja: 0.3.2
+Prompt: popraw zeby kolumny wygenerwoane w ten sposob lookml_code_dim.append(f'\n    \n# {col_name}: {{hidden:yes}}') pojawialy sie nie w jednej linii jak teraz tylko jedna pod druga
+Zmiany: Zmieniono formatowanie ukrytych wymiarów, aby każdy pojawiał się w nowej linii.
+---
+Wersja: 0.3.3
+Prompt: popraw skrypt ktory wstawia te kolumny kazda powinna byc w nowej linii
+Zmiany: Zmieniono formatowanie ukrytych wymiarów, aby każdy pojawiał się w nowej linii, usuwając dodatkowy znak nowej linii na początku.
+---
+Wersja: 0.3.4
+Prompt: popraw zeby kolumny wygenerwoane w ten sposob lookml_code_dim.append(f'\n    \n# {col_name}: {{hidden:yes}}') pojawialy sie nie w jednej linii jak teraz tylko jedna pod druga
+Zmiany: Naprawiono błąd SyntaxError w f-stringu dla ukrytych wymiarów i zapewniono, że każdy ukryty wymiar jest w nowej linii.
+---
+Wersja: 0.3.5
+Prompt: popraw zeby kolumny wygenerwoane w ten sposob lookml_code_dim.append(f'\n    \n# {col_name}: {{hidden:yes}}') pojawialy sie nie w jednej linii jak teraz tylko jedna pod druga
+Zmiany: Naprawiono błąd formatowania ukrytych wymiarów, aby każdy pojawiał się w nowej linii.
+---
+Wersja: 0.3.6
+Prompt: popraw zeby kolumny wygenerwoane w ten sposob lookml_code_dim.append(f'\n    \n# {col_name}: {{hidden:yes}}') pojawialy sie nie w jednej linii jak teraz tylko jedna pod druga
+Zmiany: Dodano znak nowej linii do wszystkich generowanych wymiarów, aby zapewnić, że każdy wymiar pojawia się w nowej linii w wygenerowanym pliku LookML.
+---
+Wersja: 0.3.7
+Prompt: jak generujesz zakomentowane dimension - wklejaj je w kod w momencie iteracji przez plik xlsx. kazda w nowej linijce
+Zmiany: Skrypt dodaje teraz znak nowej linii po każdym zakomentowanym wymiarze. Poprawiono również obsługę ścieżek do plików z cudzysłowami oraz usunięto cudzysłowy z argumentu pre_file_name, aby zapobiec błędom.
+---
+Wersja: 0.3.8
+Prompt: nie dodawaj zadnych przedorstkow do generowanych plikow view
+Zmiany: Usunięto argument `--pre_file_name` i powiązaną z nim logikę, aby generowane pliki widoków nie miały żadnych prefiksów w nazwie.
+---
+Wersja: 0.3.9
+Prompt: wwartość przy extends: musi byc zawsze w nawiasach kwadratowych
+Zmiany: Wartość `extends` jest teraz zawsze umieszczana w nawiasach kwadratowych.
+---
+Wersja: 1.0.0
+Prompt: jest ok. zapisz ten plik jako wersja 1.0.0 a w changelogu napisz ze jest to dzialajacy skrypt przy zalozeniu 2 plikow _base (opisz)
+Zmiany: To jest działająca wersja skryptu, która opiera się na dwóch plikach bazowych: `_base_snapshot_date.view.lkml` i `_base_validity_range.view.lkml`. Skrypt automatycznie wykrywa, którego pliku bazowego użyć na podstawie obecności określonych kolumn w pliku Excel.
+---
+Wersja: 1.0.1
+Prompt: powstanie kolejny plik o nazwie _base ktory bedzie zawieral kolumny "LINEAGE_ID","LOAD_TS","SOURCE_SYSTEM_ID". w pliku validity_range zostanie tylko business_date. W snapshot_date rowniez te 3 kolumny zostana usuniete. Uwzglednij kolejny plik _base w kodzie.
+Zmiany: Dodano nowy plik bazowy '_base' zawierający kolumny 'LINEAGE_ID', 'LOAD_TS', 'SOURCE_SYSTEM_ID'. Zaktualizowano 'SNAPSHOT_DATE_COLUMNS' i 'VALIDITY_RANGE_COLUMNS' o usunięcie tych kolumn. Zmodyfikowano logikę generowania LookML, aby obsługiwała wiele rozszerzeń i dołączeń.
+---
+Wersja: 1.0.2
+Prompt: w sql_table_name brakuje nazwy tabeli
+Zmiany: Poprawiono formatowanie `sql_table_name` w wygenerowanym LookML, aby prawidłowo zawierało nazwę tabeli i używało kropki zamiast podkreślenia między `dataset_id` a `table_id`.
+---
+Wersja: 1.0.3
+Prompt: zmienna table_id jest pusta - sprawdz to
+Zmiany: Usunięto błędny debug print. Poprawiono formatowanie `sql_table_name` w wygenerowanym LookML, aby prawidłowo zawierało nazwę tabeli i używało kropki zamiast podkreślenia między `dataset_id` a `table_id`.
+---
+Wersja: 2.0.0
+Prompt: jest ok. zapisz ten plik jako v2.0.0 napisz ze wszystko dziala dobrze i opisz warunki na jakich dziala skrypt
+Zmiany: Skrypt jest w pełni funkcjonalny. Generuje pliki LookML na podstawie danych z pliku Excel. Obsługuje trzy pliki bazowe: `_base.view.lkml` (dla kolumn `LINEAGE_ID`, `LOAD_TS`, `SOURCE_SYSTEM_ID`), `_base_snapshot_date.view.lkml` (dla kolumn `FROM_DATE`, `TO_DATE`, `IS_LAST_FLAG`, `LAST_MOD_TS`) i `_base_validity_range.view.lkml` (dla kolumny `BUSINESS_DATE`). Automatycznie wykrywa, które pliki bazowe powinny być rozszerzone na podstawie kolumn obecnych w pliku Excel. Zapewnia prawidłowe formatowanie `sql_table_name` i umieszcza `extends` w nawiasach kwadratowych.
+---

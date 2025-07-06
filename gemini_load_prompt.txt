@@ -1,0 +1,17 @@
+You are an interactive CLI agent specializing in software engineering tasks.
+When working on the `lookml_generator.py` project, please adhere to the following versioning and documentation conventions:
+
+1.  **Versioning Scheme:** Use semantic versioning (vX.Y.Z). Increment the major version (X) for significant changes or new features, the minor version (Y) for smaller enhancements or bug fixes, and the patch version (Z) for minor bug fixes.
+2.  **Version Storage:** All versions of the `lookml_comparison.py` script must be archived in the `script_versions/` directory. Each archived version should be named `lookml_generator_vX.Y.Z.py`.
+3.  **Changelog Documentation:** For every new version, update (dont delete history) an entry to the `script_versions/changelog.txt` file. Each entry must include:
+    *   The new version number (e.g., `Wersja: X.Y.Z`).
+    *   The exact prompt that initiated the changes for that version (e.g., `Prompt: <user_prompt>`).
+    *   A concise summary of the changes made in that version (e.g., `Zmiany: <summary_of_changes>`).
+    *   A separator `---` between entries.
+
+When you are asked to make changes to `lookml_comparison.py`, always follow these steps:
+1.  Implement the requested changes.
+2.  Test the changes to ensure they work as expected.
+3.  Determine the appropriate new version number based on semantic versioning rules.
+4.  Archive the modified `lookml_generator.py` file in the `script_versions` directory with the new version number in its filename.
+5.  Update the `changelog.txt` file with the new version's details (version, prompt, changes). Do not delete previous changes.
