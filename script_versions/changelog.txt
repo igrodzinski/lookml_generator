@@ -74,3 +74,8 @@ Wersja: 3.1.0
 Prompt: recznie wprowadzilem zmiany w pliku lookml_generator.py zupdajtuj changlog do wersji v3.1.0 i zarchiwizuj nowa wersje
 Zmiany: Ręcznie zaktualizowano logikę skryptu. Zmieniono nazwy plików bazowych i ścieżki do nich, aby lepiej odpowiadały nowej strukturze projektu.
 ---
+
+Wersja: 3.2.0
+Prompt: recznie wprowadzilem zmiany w pliku lookml_generator.py zupdajtuj changlog do wersji v3.2.0 i zarchiwizuj nowa wersje
+Zmiany: Ręcznie zaktualizowano logikę skryptu. Zamieniono definicje `SNAPSHOT_DATE_COLUMNS` i `VALIDITY_RANGE_COLUMNS`, aby poprawnie odpowiadały ich przeznaczeniu.
+---
