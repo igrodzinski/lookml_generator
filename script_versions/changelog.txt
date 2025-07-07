@@ -66,3 +66,11 @@ Wersja: 2.0.0
 Prompt: jest ok. zapisz ten plik jako v2.0.0 napisz ze wszystko dziala dobrze i opisz warunki na jakich dziala skrypt
 Zmiany: Skrypt jest w pełni funkcjonalny. Generuje pliki LookML na podstawie danych z pliku Excel. Obsługuje trzy pliki bazowe: `_base.view.lkml` (dla kolumn `LINEAGE_ID`, `LOAD_TS`, `SOURCE_SYSTEM_ID`), `_base_snapshot_date.view.lkml` (dla kolumn `FROM_DATE`, `TO_DATE`, `IS_LAST_FLAG`, `LAST_MOD_TS`) i `_base_validity_range.view.lkml` (dla kolumny `BUSINESS_DATE`). Automatycznie wykrywa, które pliki bazowe powinny być rozszerzone na podstawie kolumn obecnych w pliku Excel. Zapewnia prawidłowe formatowanie `sql_table_name` i umieszcza `extends` w nawiasach kwadratowych.
 ---
+Wersja: 3.0.0
+Prompt: wygeneruj mi kod ktory bede mogl wkleic do jupyter notebook - pozwalajacy sterowac mi generowanie plikow view. z poziomu tego pliku chce ustawiac sciezki do folderow
+Zmiany: Zmodyfikowano skrypt, aby mógł być używany jako moduł w Jupyter Notebook. Dodano możliwość określenia folderu wyjściowego dla generowanych plików LookML. Umożliwia to elastyczne zarządzanie ścieżkami i generowanie plików w dowolnej lokalizacji.
+---
+Wersja: 3.1.0
+Prompt: recznie wprowadzilem zmiany w pliku lookml_generator.py zupdajtuj changlog do wersji v3.1.0 i zarchiwizuj nowa wersje
+Zmiany: Ręcznie zaktualizowano logikę skryptu. Zmieniono nazwy plików bazowych i ścieżki do nich, aby lepiej odpowiadały nowej strukturze projektu.
+---

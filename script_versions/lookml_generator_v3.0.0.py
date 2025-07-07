@@ -72,8 +72,7 @@ def clean_excel_file(file_path,model_name, generate_lookml, save_datasets, gener
             save_datasets_to_json(datasets,dataset_name)
     if generate_lookml:
         for i, dataset in enumerate(datasets):
-            # print(f'################## nr datasetu: {i}##################')
-            print(f'################## nazwa datasetu: {dataset_name} ##################')
+            print(f'################## nr datasetu: {i}##################')
             generate_lookml_from_excel(dataset,dataset_name,model_name, output_dir)
 
 def load_dataframes_from_json(file_path):
@@ -147,17 +146,17 @@ def generate_lookml_from_excel(df,dataset_name,model_name, output_dir):
     comment_prefix = ""
 
     if BASE_COLUMNS.issubset(df_columns):
-        extends_views.append("_base_tech")
-        include_paths.append("/datasets/_base/views/_base_tech.view.lkml")
+        extends_views.append("_base")
+        include_paths.append("../../views/_base/_base.view.lkml")
         commented_dimensions.update(BASE_COLUMNS)
 
     if SNAPSHOT_DATE_COLUMNS.issubset(df_columns):
         extends_views.append("_base_snapshot_date")
-        include_paths.append("/datasets/_base/views/_base_snapshot_date.view.lkml")
+        include_paths.append("../../views/_base/_base_snapshot_date.view.lkml")
         commented_dimensions.update(SNAPSHOT_DATE_COLUMNS)
     elif VALIDITY_RANGE_COLUMNS.issubset(df_columns):
         extends_views.append("_base_validity_range")
-        include_paths.append("/datasets/_base/views/_base_validity_range.view.lkml")
+        include_paths.append("../../views/_base/_base_validity_range.view.lkml")
         commented_dimensions.update(VALIDITY_RANGE_COLUMNS)
 
     # Determine which base columns are missing from the current DataFrame
