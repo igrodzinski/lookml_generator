@@ -19,7 +19,7 @@ Prompt: popraw zeby kolumny wygenerwoane w ten sposob lookml_code_dim.append(f'\
 Zmiany: Zmieniono formatowanie ukrytych wymiarów, aby każdy pojawiał się w nowej linii.
 ---
 Wersja: 0.3.3
-Prompt: popraw skrypt ktory wstawia te kolumny kazda powinna byc w nowej linii
+Prompt: popraw skrypt ktory wstawia te kolumny kazda powinna byc w nowej linijce
 Zmiany: Zmieniono formatowanie ukrytych wymiarów, aby każdy pojawiał się w nowej linii, usuwając dodatkowy znak nowej linii na początku.
 ---
 Wersja: 0.3.4
@@ -78,4 +78,9 @@ Zmiany: Ręcznie zaktualizowano logikę skryptu. Zmieniono nazwy plików bazowyc
 Wersja: 3.2.0
 Prompt: recznie wprowadzilem zmiany w pliku lookml_generator.py zupdajtuj changlog do wersji v3.2.0 i zarchiwizuj nowa wersje
 Zmiany: Ręcznie zaktualizowano logikę skryptu. Zamieniono definicje `SNAPSHOT_DATE_COLUMNS` i `VALIDITY_RANGE_COLUMNS`, aby poprawnie odpowiadały ich przeznaczeniu.
+---
+
+Wersja: 3.3.0
+Prompt: recznie wprowadzilem zmiany w pliku lookml_generator.py zupdajtuj changlog do wersji v3.3.0 i zarchiwizuj nowa wersje
+Zmiany: Ręcznie zaktualizowano logikę skryptu. Poprawiono błąd w `generate_lookml_from_excel`, zastępując `sql: ${{TABLE}}.{column_name} ;;` na `sql: ${TABLE}.`column_name` ;;`.
 ---
