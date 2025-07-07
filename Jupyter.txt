@@ -1,0 +1,32 @@
+import os
+from lookml_generator import clean_excel_file
+
+# Ścieżki do folderów (zmień na właściwe)
+excel_files_directory = 'ścieżka/do/folderu/z/plikami/excel'
+output_directory = 'ścieżka/do/folderu/wyjściowego'
+
+# Weryfikacja istnienia folderów
+if not os.path.isdir(excel_files_directory):
+    print(f"Błąd: Folder '{excel_files_directory}' nie istnieje.")
+elif not os.path.isdir(output_directory):
+    print(f"Błąd: Folder '{output_directory}' nie istnieje.")
+else:
+    for filename in os.listdir(excel_files_directory):
+        if filename.endswith(".xlsx"):
+            file_path = os.path.join(excel_files_directory, filename)
+            model_name = os.path.basename(file_path)
+
+            print(f"Przetwarzanie pliku: {file_path}")
+
+            clean_excel_file(
+                file_path=file_path,
+                model_name=model_name,
+                generate_lookml=True,
+                save_datasets=False,
+                generate_connections=False,
+                output_dir=output_directory
+            )
+
+            print(f"Ukończono przetwarzanie pliku: {filename}")
+
+print("Wszystkie pliki zostały przetworzone.")
