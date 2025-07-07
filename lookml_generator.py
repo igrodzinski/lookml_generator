@@ -21,7 +21,7 @@ def _get_column_data(row):
         'group_label': row['GROUP_LABEL']
     }
 
-def clean_excel_file(file_path,model_name, generate_lookml, save_datasets, generate_connections):
+def clean_excel_file(file_path,model_name, generate_lookml, save_datasets, generate_connections, output_dir):
     # Get file name (dataset name)
     dataset_name = os.path.basename(file_path).replace(".xlsx","")
     # Load the Excel file
@@ -73,7 +73,7 @@ def clean_excel_file(file_path,model_name, generate_lookml, save_datasets, gener
     if generate_lookml:
         for i, dataset in enumerate(datasets):
             print(f'################## nr datasetu: {i}##################')
-            generate_lookml_from_excel(dataset,dataset_name,model_name)
+            generate_lookml_from_excel(dataset,dataset_name,model_name, output_dir)
 
 def load_dataframes_from_json(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -131,7 +131,7 @@ def save_datasets_to_json(datasets,dataset_name):
     print(f"Zapisano jako: {f_name}")
     return dict_datasets
     
-def generate_lookml_from_excel(df,dataset_name,model_name):
+def generate_lookml_from_excel(df,dataset_name,model_name, output_dir):
     lookml_code_dim = []
     lookml_code_dimgr = []
     lookml_code_m = []
@@ -326,10 +326,10 @@ def generate_lookml_from_excel(df,dataset_name,model_name):
         lookml_code_dim.append(f'    # {col_name}: {{hidden:yes}}\n')
 
     model_name = model_name.replace(".xlsx","")
-    output_dir = os.path.join('#generated', model_name)
-    os.makedirs(output_dir, exist_ok=True)
+    model_specific_output_dir = os.path.join(output_dir, model_name)
+    os.makedirs(model_specific_output_dir, exist_ok=True)
     file_name = file_name.lower()
-    output_path = os.path.join(output_dir, f"{file_name}.view.lkml")
+    output_path = os.path.join(model_specific_output_dir, f"{file_name}.view.lkml")
 
     with open(output_path, 'w', encoding = "utf-8") as f:
         for path in include_paths:
@@ -345,6 +345,7 @@ def generate_lookml_from_excel(df,dataset_name,model_name):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate LookML from an Excel file.')
     parser.add_argument("file_path", help="Path to the Excel file")
+    parser.add_argument("--output_dir", default="#generated", help="Directory to save generated LookML files.")
     parser.add_argument("--save_datasets", action="store_true", help="Save datasets to JSON")
     parser.add_argument("--generate_lookml", action="store_true", default=True, help="Generate LookML")
     parser.add_argument("--generate_connections", action="store_true", help="Generate connections")
@@ -352,4 +353,4 @@ if __name__ == "__main__":
 
     model_name = os.path.basename(args.file_path)
     
-    clean_excel_file(args.file_path, model_name, args.generate_lookml, args.save_datasets, args.generate_connections)
+    clean_excel_file(args.file_path, model_name, args.generate_lookml, args.save_datasets, args.generate_connections, args.output_dir)
