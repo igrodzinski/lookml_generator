@@ -19,7 +19,7 @@ Prompt: popraw zeby kolumny wygenerwoane w ten sposob lookml_code_dim.append(f'\
 Zmiany: Zmieniono formatowanie ukrytych wymiarów, aby każdy pojawiał się w nowej linii.
 ---
 Wersja: 0.3.3
-Prompt: popraw skrypt ktory wstawia te kolumny kazda powinna byc w nowej linii
+Prompt: popraw skrypt ktory wstawia te kolumny kazda powinna byc w nowej linijce
 Zmiany: Zmieniono formatowanie ukrytych wymiarów, aby każdy pojawiał się w nowej linii, usuwając dodatkowy znak nowej linii na początku.
 ---
 Wersja: 0.3.4
@@ -65,4 +65,60 @@ Zmiany: Usunięto błędny debug print. Poprawiono formatowanie `sql_table_name`
 Wersja: 2.0.0
 Prompt: jest ok. zapisz ten plik jako v2.0.0 napisz ze wszystko dziala dobrze i opisz warunki na jakich dziala skrypt
 Zmiany: Skrypt jest w pełni funkcjonalny. Generuje pliki LookML na podstawie danych z pliku Excel. Obsługuje trzy pliki bazowe: `_base.view.lkml` (dla kolumn `LINEAGE_ID`, `LOAD_TS`, `SOURCE_SYSTEM_ID`), `_base_snapshot_date.view.lkml` (dla kolumn `FROM_DATE`, `TO_DATE`, `IS_LAST_FLAG`, `LAST_MOD_TS`) i `_base_validity_range.view.lkml` (dla kolumny `BUSINESS_DATE`). Automatycznie wykrywa, które pliki bazowe powinny być rozszerzone na podstawie kolumn obecnych w pliku Excel. Zapewnia prawidłowe formatowanie `sql_table_name` i umieszcza `extends` w nawiasach kwadratowych.
+---
+Wersja: 3.0.0
+Prompt: wygeneruj mi kod ktory bede mogl wkleic do jupyter notebook - pozwalajacy sterowac mi generowanie plikow view. z poziomu tego pliku chce ustawiac sciezki do folderow
+Zmiany: Zmodyfikowano skrypt, aby mógł być używany jako moduł w Jupyter Notebook. Dodano możliwość określenia folderu wyjściowego dla generowanych plików LookML. Umożliwia to elastyczne zarządzanie ścieżkami i generowanie plików w dowolnej lokalizacji.
+---
+Wersja: 3.1.0
+Prompt: recznie wprowadzilem zmiany w pliku lookml_generator.py zupdajtuj changlog do wersji v3.1.0 i zarchiwizuj nowa wersje
+Zmiany: Ręcznie zaktualizowano logikę skryptu. Zmieniono nazwy plików bazowych i ścieżki do nich, aby lepiej odpowiadały nowej strukturze projektu.
+---
+
+Wersja: 3.2.0
+Prompt: recznie wprowadzilem zmiany w pliku lookml_generator.py zupdajtuj changlog do wersji v3.2.0 i zarchiwizuj nowa wersje
+Zmiany: Ręcznie zaktualizowano logikę skryptu. Zamieniono definicje `SNAPSHOT_DATE_COLUMNS` i `VALIDITY_RANGE_COLUMNS`, aby poprawnie odpowiadały ich przeznaczeniu.
+---
+
+Wersja: 3.3.0
+Prompt: recznie wprowadzilem zmiany w pliku lookml_generator.py zupdajtuj changlog do wersji v3.3.0 i zarchiwizuj nowa wersje
+Zmiany: Ręcznie zaktualizowano logikę skryptu. Poprawiono błąd w `generate_lookml_from_excel`, zastępując `sql: ${{TABLE}}.{column_name} ;;` na `sql: ${TABLE}.`column_name` ;;`.
+---
+Wersja: 3.4.0
+Prompt: Zmieniamy podejscie do # Define sets of columns for each base view. Zamiast zdefiniowania na sztywno tych kolumn, pliki _base z tymi kolumnami beda w folderze np. ./datasets/views/_base/ Musisz wczytać po kolei kazdy plik view lkml z tego pliku i na jego podstawie stworzyc zmienne zawierajace base. Reszta dzialan z tymi kolumnami pozostaje bez zmian. Musisz tylko dodac funkcjonalnosc zczytywania wszystkich kolumn z plikow w folderze _base.
+Zmiany: Zastąpiono statycznie zdefiniowane zestawy kolumn (BASE_COLUMNS, VALIDITY_RANGE_COLUMNS, SNAPSHOT_DATE_COLUMNS) dynamicznym wczytywaniem z plików .view.lkml w folderze #models/_base/views/. Nazwa pliku (bez rozszerzenia) staje się kluczem w słowniku `base_columns`, a wartością jest zbiór nazw kolumn (wymiarów) znalezionych w pliku.
+---
+Wersja: 3.5.0
+Prompt: plikow w folerze _base moze byc wiele. Musisz stworzyc dict np base_columns i w nim kluczem bedzie np nazwa pliku lkml z folderu base a value to bedzie array nazw pol jakie sa w nim zdefiniowane. Nastepnie taki dict jest uzywany w funkcji generate_lookml_from_excel przy generowaniu nowych plikow view.
+Zmiany: Wprowadzono pełną dynamiczną obsługę plików bazowych. Funkcja `generate_lookml_from_excel` teraz przyjmuje słownik `base_columns` i na jego podstawie dynamicznie decyduje, które widoki bazowe rozszerzyć, iterując po wszystkich plikach w folderze `_base`.
+---
+Wersja: 3.5.1
+Prompt: dodalem nowy plik w _base. uruchom skrypt i sprawdz czy na pewno zaimplementowales to o co prosilem
+Zmiany: Naprawiono błąd `TypeError`, który występował z powodu nieprawidłowej definicji funkcji `generate_lookml_from_excel`. Poprawiono definicję, aby akceptowała dynamicznie tworzony słownik `base_columns`, co zapewnia pełną obsługę wielu plików bazowych.
+---
+Wersja: 3.6.0
+Prompt: zarchiwizuj ten kod jako wersja v3.6.0 i w changlogu zaznacz ze jest to wersja stabilna i dzialajaca
+Zmiany: To jest stabilna i działająca wersja skryptu. W pełni implementuje dynamiczne wczytywanie plików bazowych z folderu `_base` i na ich podstawie generuje pliki LookML.
+---
+Wersja: 3.7.0
+Prompt: w generowanym widoku przykladowym dim_client_unique sa kolumny takie jak lineage_id oraz load_ts. obie wystepuja w pliku _base o nazwie _base_tech.view.lkml. Dodatkowo w tym pliku jest rowniez SOURCE_SYSTEM_ID ktory nie powinien sie znalezc w pliku dim_client_unique. Czyli zmodyfikuj logike tak by sprawdzala wszystkie kolumny we wszystkich plikach base, jesli dana kolumna jest w pliku base to ja importuj a reszte kolumn z pliku _base przekopiuj z atrybutem hidden. czyli wracajac do naszego przykladu plik dim_client_uqnique powinien miec w extends jeszcze dodany plik _base_tech oraz include do tego pliku i dodatkowo kolumna source_system_id powinna wygladac tak dimension: source_system_id {hidden: yes}. 
+Zmiany: Zmieniono logikę `generate_lookml_from_excel`. Teraz, jeśli jakakolwiek kolumna z pliku bazowego pasuje do pliku Excel, widok bazowy jest dołączany. Pasujące kolumny są komentowane, a brakujące kolumny z pliku bazowego są dodawane jako ukryte wymiary (`hidden: yes`).
+---
+Wersja: 3.7.1
+Prompt: ten fragment jest do poprawy for col_name in missing_base_columns:
+        lookml_code_dim.append(f'    # {col_name}: {{hidden:yes}}\n')
+Zmiany: Poprawiono błąd, który powodował, że brakujące wymiary bazowe były generowane jako zakomentowane. Teraz są one poprawnie generowane jako aktywne, ukryte wymiary (`dimension: name {hidden: yes}`). Usunięto również błędne komentarze z wymiarów, które powinny być aktywne.
+---
+Wersja: 3.8.0
+Prompt: do poprway load_base_columns - w plikach _base nie musza byc zdefiniowane tylko dimension moga byc tez dimension_group i measures. czyli do nazwy kolumny dodaj jeszcze jej typ. i ten typ wstaw w linijce lookml_code_dim.append(f'    dimension: {col_name.lower()} {{hidden: yes}}\n') zamiast wpisanego na sztywno dimension
+Zmiany: Zmodyfikowano funkcję `load_base_columns`, aby poprawnie identyfikowała typy pól (dimension, dimension_group, measure) w plikach bazowych. Funkcja `generate_lookml_from_excel` została zaktualizowana, aby dynamicznie używać tych typów podczas generowania brakujących, ukrytych pól, co zapewnia poprawne i elastyczne dołączanie widoków bazowych.
+---
+Wersja: 4.0.0
+Prompt: wprowadzilem reczne poprawki. Zarchiwizuj plik jako wersje v4.0.0 - napisz ze jest to wersja stabilna w changelog i uruchom skrypt w celu weryfikacji. nie nanos zadnych poprawek i zmian
+Zmiany: Ręczne poprawki wprowadzone przez użytkownika. Wersja oznaczona jako stabilna.
+---
+
+Wersja: 4.0.1
+Prompt: ok teraz wprowadzilem odpowiednie zmiany. zarchiwizuj plik jako wersja v4.0.1 i w changelog napisz ze jest to wersja stabilna.
+Zmiany: Ręczne poprawki wprowadzone przez użytkownika. Wersja oznaczona jako stabilna.
 ---

@@ -12,11 +12,14 @@ def load_base_columns(base_views_path):
             view_name = file_name.replace(".view.lkml", "")
             with open(os.path.join(base_views_path, file_name), 'r') as f:
                 content = f.read()
-                columns = re.findall(r'(dimension|dimension_group|measure): (\w+)', content)
-                base_columns[view_name] = {c[1].upper(): c[0] for c in columns}
+                columns = re.findall(r'dimension: (\w+)', content)
+                base_columns[view_name] = set(c.upper() for c in columns)
     return base_columns
 
 base_columns = load_base_columns('#models/_base/views')
+BASE_COLUMNS = base_columns.get('_base_tech', set())
+VALIDITY_RANGE_COLUMNS = base_columns.get('_base_validity_range', set())
+SNAPSHOT_DATE_COLUMNS = base_columns.get('_base_snapshot_date', set())
 
 predefined_columns = {}
 
@@ -139,7 +142,7 @@ def save_datasets_to_json(datasets,dataset_name):
     print(f"Zapisano jako: {f_name}")
     return dict_datasets
     
-def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_columns):
+def generate_lookml_from_excel(df,dataset_name,model_name, output_dir):
     lookml_code_dim = []
     lookml_code_dimgr = []
     lookml_code_m = []
@@ -153,15 +156,26 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
     commented_dimensions = set()
     comment_prefix = ""
 
-    missing_base_columns = {}
-    for view_name, columns in base_columns.items():
-        base_column_names = set(columns.keys())
-        if not base_column_names.isdisjoint(df_columns):
-            extends_views.append(view_name)
-            include_paths.append(f"/datasets/_base/views/{view_name}.view.lkml")
-            commented_dimensions.update(base_column_names.intersection(df_columns))
-            for col_name in base_column_names - df_columns:
-                missing_base_columns[col_name] = columns[col_name]
+    if BASE_COLUMNS.issubset(df_columns):
+        extends_views.append("_base_tech")
+        include_paths.append("/datasets/_base/views/_base_tech.view.lkml")
+        commented_dimensions.update(BASE_COLUMNS)
+
+    if SNAPSHOT_DATE_COLUMNS.issubset(df_columns):
+        extends_views.append("_base_snapshot_date")
+        include_paths.append("/datasets/_base/views/_base_snapshot_date.view.lkml")
+        commented_dimensions.update(SNAPSHOT_DATE_COLUMNS)
+    elif VALIDITY_RANGE_COLUMNS.issubset(df_columns):
+        extends_views.append("_base_validity_range")
+        include_paths.append("/datasets/_base/views/_base_validity_range.view.lkml")
+        commented_dimensions.update(VALIDITY_RANGE_COLUMNS)
+
+    # Determine which base columns are missing from the current DataFrame
+    missing_base_columns = set()
+    if "_base_snapshot_date" in extends_views:
+        missing_base_columns = SNAPSHOT_DATE_COLUMNS - df_columns
+    elif "_base_validity_range" in extends_views:
+        missing_base_columns = VALIDITY_RANGE_COLUMNS - df_columns
 
     for index, row in df.iterrows():
         column_data = _get_column_data(row)
@@ -319,8 +333,8 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
 """)
 
     # Add hidden dimensions for missing base columns
-    for col_name, col_type in missing_base_columns.items():
-        lookml_code_dim.append(f'    {col_type}: {col_name.lower()} {{hidden: yes}}\n')
+    for col_name in missing_base_columns:
+        lookml_code_dim.append(f'    # {col_name}: {{hidden:yes}}\n')
 
     model_name = model_name.replace(".xlsx","")
     model_specific_output_dir = os.path.join(output_dir, model_name)

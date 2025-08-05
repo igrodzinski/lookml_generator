@@ -12,8 +12,8 @@ def load_base_columns(base_views_path):
             view_name = file_name.replace(".view.lkml", "")
             with open(os.path.join(base_views_path, file_name), 'r') as f:
                 content = f.read()
-                columns = re.findall(r'(dimension|dimension_group|measure): (\w+)', content)
-                base_columns[view_name] = {c[1].upper(): c[0] for c in columns}
+                columns = re.findall(r'dimension: (\w+)', content)
+                base_columns[view_name] = set(c.upper() for c in columns)
     return base_columns
 
 base_columns = load_base_columns('#models/_base/views')
@@ -153,15 +153,13 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
     commented_dimensions = set()
     comment_prefix = ""
 
-    missing_base_columns = {}
+    missing_base_columns = set()
     for view_name, columns in base_columns.items():
-        base_column_names = set(columns.keys())
-        if not base_column_names.isdisjoint(df_columns):
+        if not columns.isdisjoint(df_columns):
             extends_views.append(view_name)
             include_paths.append(f"/datasets/_base/views/{view_name}.view.lkml")
-            commented_dimensions.update(base_column_names.intersection(df_columns))
-            for col_name in base_column_names - df_columns:
-                missing_base_columns[col_name] = columns[col_name]
+            commented_dimensions.update(columns.intersection(df_columns))
+            missing_base_columns.update(columns - df_columns)
 
     for index, row in df.iterrows():
         column_data = _get_column_data(row)
@@ -179,17 +177,17 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
         if column_name in predefined_columns:
             if "dimension_group:" in predefined_columns[column_name]:
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_dimgr.append(f'    # dimension_group: {column_name} {{}}\n')
+                    lookml_code_dimgr.append(f'    dimension_group: {column_name} {{}}\n')
                 else:
                     lookml_code_dimgr.append(predefined_columns[column_name])
             elif "measure:"in predefined_columns[column_name]:
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_m.append(f'    # measure: {column_name} {{}}\n')
+                    lookml_code_m.append(f'    measure: {column_name} {{}}\n')
                 else:
                     lookml_code_m.append(predefined_columns[column_name])
             else:
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_dim.append(f'    # dimension: {column_name} {{}}\n')
+                    lookml_code_dim.append(f'    dimension: {column_name} {{}}\n')
                 else:
                     lookml_code_dim.append(predefined_columns[column_name])
         else:
@@ -204,7 +202,7 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
                 
             if data_type == 'date' or data_type == 'datetime':
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_dimgr.append(f'    # dimension_group: {column_name} {{}}\n')
+                    lookml_code_dimgr.append(f'    dimension_group: {column_name} {{}}\n')
                 else:
                     lookml_code_dimgr.append(
                         """
@@ -222,7 +220,7 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
                     )
             elif data_type == 'timestamp':
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_dim.append(f'    # dimension: {column_name} {{}}\n')
+                    lookml_code_dim.append(f'    dimension: {column_name} {{}}\n')
                 else:
                     lookml_code_dim.append(f"""
     dimension: {column_name} {{
@@ -237,7 +235,7 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
     
             elif data_type in ['number', 'integer', 'numeric']:
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_dim.append(f'    # dimension: {column_name} {{}}\n')
+                    lookml_code_dim.append(f'    dimension: {column_name} {{}}\n')
                 else:
                     lookml_code_dim.append(comment_prefix + f"""
     dimension: {column_name} {{
@@ -250,7 +248,7 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
 """)
             elif data_type == 'string':
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_dim.append(f'    # dimension: {column_name} {{}}\n')
+                    lookml_code_dim.append(f'    dimension: {column_name} {{}}\n')
                 else:
                     lookml_code_dim.append(f"""
     dimension: {column_name} {{
@@ -263,7 +261,7 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
 """)
             elif data_type == 'yesno':
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_dim.append(f'    # dimension: {column_name} {{}}\n')
+                    lookml_code_dim.append(f'    dimension: {column_name} {{}}\n')
                 else:
                     lookml_code_dim.append(comment_prefix + f"""
     dimension: {column_name} {{
@@ -276,7 +274,7 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
 """)
             elif data_type == 'sum':
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_m.append(f'    # measure: {column_name}_sum {{}}\n')
+                    lookml_code_m.append(f'    measure: {column_name}_sum {{}}\n')
                 else:
                     lookml_code_m.append(comment_prefix + f"""
     measure: {column_name}_sum {{
@@ -291,7 +289,7 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
 """)
             elif data_type == 'count':
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_m.append(f'    # measure: {column_name}_count {{}}\n')
+                    lookml_code_m.append(f'    measure: {column_name}_count {{}}\n')
                 else:
                     lookml_code_m.append(comment_prefix + f"""
     measure: {column_name}_count {{
@@ -306,7 +304,7 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
 """)
             else:
                 if column_name.upper() in commented_dimensions:
-                    lookml_code_dim.append(f'    # dimension: {column_name} {{}}\n')
+                    lookml_code_dim.append(f'    dimension: {column_name} {{}}\n')
                 else:
                     lookml_code_dim.append(comment_prefix + f"""
     dimension: {column_name} {{
@@ -319,8 +317,8 @@ def generate_lookml_from_excel(df, dataset_name, model_name, output_dir, base_co
 """)
 
     # Add hidden dimensions for missing base columns
-    for col_name, col_type in missing_base_columns.items():
-        lookml_code_dim.append(f'    {col_type}: {col_name.lower()} {{hidden: yes}}\n')
+    for col_name in missing_base_columns:
+        lookml_code_dim.append(f'    dimension: {col_name.lower()} {{hidden: yes}}\n')
 
     model_name = model_name.replace(".xlsx","")
     model_specific_output_dir = os.path.join(output_dir, model_name)

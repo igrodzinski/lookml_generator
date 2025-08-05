@@ -1,2 +1,5 @@
 \#generated/*
 \#models/*
+\-p
+prompt.txt
+Jupyter.txt
